@@ -1,12 +1,14 @@
 <?php
-/**
- * Armature
- *
- * @link          https://github.com/Armature
- * @author        Oleg Budrin <ru.mofsy@yandex.ru>
- * @author_link   https://mofsy.ru
- * @copyright     Copyright (c) 2015, Oleg Budrin (Mofsy)
- */
+/*
+  +----------------------------------------------------------------------+
+  | Armature                                                             |
+  +----------------------------------------------------------------------+
+  | Website: http://armature.pw                                          |
+  | Github: https://github.com/Armature                                  |
+  +----------------------------------------------------------------------+
+  | Author: Oleg Budrin (Mofsy) <support@mofsy.ru> <https://mofsy.ru>    |
+  +----------------------------------------------------------------------+
+*/
 
 namespace Armature\Client;
 
@@ -45,7 +47,7 @@ class Main
      *
      * @var string
      */
-    public $secret_key = 'fdfbLhlLgnJDKJklblngkk6krtkghm565678kl78klkUUHtvdfdoghphj';
+    private $secret_key = 'fdfbLhlLgnJDKJklblngkk6krtkghm565678kl78klkUUHtvdfdoghphj';
 
     /**
      * Полный адрес сервера, для проверки лицензии и выпуска новой.

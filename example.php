@@ -1,12 +1,14 @@
 <?php
-/**
- * Armature
- *
- * @link          https://github.com/Armature
- * @author        Oleg Budrin <ru.mofsy@yandex.ru>
- * @author_link   https://mofsy.ru
- * @copyright     Copyright (c) 2015, Oleg Budrin (Mofsy)
- */
+/*
+  +----------------------------------------------------------------------+
+  | Armature                                                             |
+  +----------------------------------------------------------------------+
+  | Website: http://armature.pw                                          |
+  | Github: https://github.com/Armature                                  |
+  +----------------------------------------------------------------------+
+  | Author: Oleg Budrin (Mofsy) <support@mofsy.ru> <https://mofsy.ru>    |
+  +----------------------------------------------------------------------+
+*/
 
 $time_start = microtime(true);
 include_once(__DIR__ . DIRECTORY_SEPARATOR . 'client.class.php' );
