@@ -225,7 +225,8 @@ class Main
         /*
          * Получаем локальный ключ из локального хранилища
          */
-        switch ($this->local_key_storage) {
+        switch ($this->local_key_storage)
+        {
             /*
              * Получаем из файла
              */
@@ -261,7 +262,8 @@ class Main
                 /*
                  * Записываем новый ключ с учетом льготного периода
                  */
-                if ($this->local_key_storage == 'filesystem') {
+                if ($this->local_key_storage === 'filesystem')
+                {
                     $this->writeLocalKey($delay['local_key'], "{$this->local_key_path}{$this->local_key_name}");
                 }
             }
@@ -356,7 +358,8 @@ class Main
         /*
          * Проверяем максимальный лимит льготного периода
          */
-        if (time() > $this->calcMaxDelay($local_key_expires, array_pop($local_key_delay_period))) {
+        if (time() > $this->calcMaxDelay($local_key_expires, array_pop($local_key_delay_period)))
+        {
             return array('write' => false, 'local_key' => '', 'errors' => $this->status_messages['maximum_delay_period_expired']);
         }
 
@@ -375,7 +378,8 @@ class Main
     {
         $delay = $this->splitLocalKey($local_key, "\n\n");
 
-        if (!isset($delay[1])) {
+        if (!isset($delay[1]))
+        {
             return -1;
         }
 
@@ -417,7 +421,7 @@ class Main
      */
     private function validateAccess($key, $valid_accesses)
     {
-        return in_array($key, (array)$valid_accesses);
+        return in_array($key, (array)$valid_accesses, false);
     }
 
     /**
@@ -516,7 +520,8 @@ class Main
         /*
          * Проверяем секретный ключ на подделку. Если не совпадают, то возвратим ошибку.
          */
-        if (md5((string)$this->secret_key . (string)$parts[0]) != $parts[1]) {
+        if (md5((string)$this->secret_key . (string)$parts[0]) != $parts[1])
+        {
             return $this->errors = $this->status_messages['local_key_tampering'];
         }
 
@@ -530,9 +535,8 @@ class Main
          */
         $key_data = unserialize($parts[0]);
         $instance = $key_data['instance'];
-        unset($key_data['instance']);
         $enforce = $key_data['enforce'];
-        unset($key_data['enforce']);
+        unset($key_data['enforce'], $key_data['instance']);
 
         /*
          * Присваиваем имя на кого была выдана лицензия свойству класса
@@ -646,14 +650,14 @@ class Main
             if (!$this->validateAccess($access_details[$key], $valid_accesses)) {
                 $conflicts[$key] = true;
 
-                if (in_array($key, array('ip', 'server_ip'))) {
+                if (in_array($key, array('ip', 'server_ip'), false)) {
                     foreach ($this->wildcardIp($access_details[$key]) as $ip) {
                         if ($this->validateAccess($ip, $valid_accesses)) {
                             unset($conflicts[$key]);
                             break;
                         }
                     }
-                } elseif (in_array($key, array('domain'))) {
+                } elseif (in_array($key, array('domain'), false)) {
                     if(isset($key_data['domain_wildcard'])) {
                         if($key_data['domain_wildcard'] == 1 && preg_match("/" . $valid_accesses[0] . "\z/i", $access_details[$key])){
                             $access_details[$key] = '*.' . $valid_accesses[0];
@@ -676,7 +680,7 @@ class Main
                     if ($this->validateAccess($access_details[$key], $valid_accesses)) {
                         unset($conflicts[$key]);
                     }
-                } elseif (in_array($key, array('server_hostname'))) {
+                } elseif (in_array($key, array('server_hostname'), false)) {
                     if ($this->validateAccess($this->wildcardServerHostname($access_details[$key]), $valid_accesses)) {
                         unset($conflicts[$key]);
                     }
@@ -880,7 +884,8 @@ class Main
     {
         $access_details = array();
 
-        if (function_exists('phpinfo')) {
+        if (function_exists('phpinfo'))
+        {
             ob_start();
             phpinfo();
             $phpinfo = ob_get_contents();
@@ -923,7 +928,8 @@ class Main
             'DOCUMENT_ROOT',
             'APPL_PHYSICAL_PATH');
 
-        foreach ($option as $key) {
+        foreach ($option as $key)
+        {
             if (!isset($_SERVER[$key]) || strlen(trim($_SERVER[$key])) <= 0) {
                 continue;
             }
@@ -1136,7 +1142,8 @@ class Main
     {
         $local_ip = '';
 
-        if (function_exists('phpinfo')) {
+        if (function_exists('phpinfo'))
+        {
             ob_start();
             phpinfo();
             $phpinfo = ob_get_contents();
@@ -1150,7 +1157,9 @@ class Main
         $local_ip = ($local_ip) ? $local_ip : $this->serverAddr();
 
         if ($local_ip === '127.0.0.1')
+        {
             return true;
+        }
 
         return false;
     }
