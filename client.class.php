@@ -709,12 +709,14 @@ class Main
     public function readLocalKey()
     {
         // проверяем на наличие папок, если нет, создаем
-        if (!is_dir($this->local_key_path)) {
-            mkdir($this->local_key_path, 0755, true);
+        if (!is_dir($this->local_key_path))
+        {
+            @mkdir($this->local_key_path, 0755, true);
         }
 
         // проверяем на существования файла с лицензией
-        if (!file_exists($path = "{$this->local_key_path}{$this->local_key_name}")) {
+        if (!file_exists($path = "{$this->local_key_path}{$this->local_key_name}"))
+        {
             // пробуем создать пустой файл
             $f = @fopen($path, 'w');
             if (!$f) {
@@ -726,9 +728,11 @@ class Main
         }
 
         // проверяем на возможность записи файла лицензии
-        if (!is_writable($path)) {
+        if (!is_writable($path))
+        {
             @chmod($path, 0777);
-            if (!is_writable($path)) {
+            if (!is_writable($path))
+            {
                 @chmod("$path", 0755);
                 if (!is_writable($path)) {
                     return $this->errors = $this->status_messages['license_file_not_writable'] . $path;
@@ -737,12 +741,14 @@ class Main
         }
 
         // Проверяем на пустоту локального временного ключа
-        if (!$local_key = @file_get_contents($path)) {
+        if (!$local_key = @file_get_contents($path))
+        {
             // Получаем новый локальный ключ
             $local_key = $this->getServerLocalKey();
 
             // Проверяем на наличие ошибок
-            if ($this->errors) {
+            if ($this->errors)
+            {
                 return $this->errors;
             }
 
@@ -759,9 +765,12 @@ class Main
      */
     public function clearLocalKey()
     {
-        if ($this->local_key_storage === 'filesystem') {
+        if ($this->local_key_storage === 'filesystem')
+        {
             $this->writeLocalKey('', "{$this->local_key_path}{$this->local_key_name}");
-        } else {
+        }
+        else
+        {
             $this->errors = $this->status_messages['invalid_local_key_storage'];
         }
     }
@@ -777,7 +786,8 @@ class Main
     public function writeLocalKey($local_key, $path)
     {
         $fp = @fopen($path, 'w');
-        if (!$fp) {
+        if (!$fp)
+        {
             return $this->errors = $this->status_messages['could_not_save_local_key'];
         }
         @fwrite($fp, $local_key);
@@ -1035,7 +1045,8 @@ class Main
         }
         fclose($fp);
 
-        if (strpos($result, '200') === false) {
+        if (strpos($result, '200') === false)
+        {
             return false;
         }
 
