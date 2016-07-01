@@ -647,41 +647,59 @@ class Main
         foreach ((array)$enforce as $key) {
             $valid_accesses = $this->extractAccessSet($instance, $key);
 
-            if (!$this->validateAccess($access_details[$key], $valid_accesses)) {
+            if (!$this->validateAccess($access_details[$key], $valid_accesses))
+            {
                 $conflicts[$key] = true;
 
-                if (in_array($key, array('ip', 'server_ip'), false)) {
-                    foreach ($this->wildcardIp($access_details[$key]) as $ip) {
-                        if ($this->validateAccess($ip, $valid_accesses)) {
+                if (in_array($key, array('ip', 'server_ip'), false))
+                {
+                    foreach ($this->wildcardIp($access_details[$key]) as $ip)
+                    {
+                        if ($this->validateAccess($ip, $valid_accesses))
+                        {
                             unset($conflicts[$key]);
                             break;
                         }
                     }
-                } elseif (in_array($key, array('domain'), false)) {
-                    if(isset($key_data['domain_wildcard'])) {
-                        if($key_data['domain_wildcard'] == 1 && preg_match("/" . $valid_accesses[0] . "\z/i", $access_details[$key])){
+                }
+                elseif (in_array($key, array('domain'), false))
+                {
+                    if(isset($key_data['domain_wildcard']))
+                    {
+                        if($key_data['domain_wildcard'] == 1 && preg_match("/" . $valid_accesses[0] . "\z/i", $access_details[$key]))
+                        {
                             $access_details[$key] = '*.' . $valid_accesses[0];
                         }
-                        if($key_data['domain_wildcard'] == 2){
+                        if($key_data['domain_wildcard'] == 2)
+                        {
                             $exp_domain = explode('.', $valid_accesses[0]);
                             $exp_domain = $exp_domain[0];
-                            if(preg_match("/".$exp_domain."/i", $access_details[$key])){
+                            if(preg_match("/".$exp_domain."/i", $access_details[$key]))
+                            {
                                 $access_details[$key] = '*.' . $valid_accesses[0] . '.*';
                             }
                         }
-                        if($key_data['domain_wildcard'] == 3){
+                        if($key_data['domain_wildcard'] == 3)
+                        {
                             $exp_domain = explode('.', $valid_accesses[0]);
                             $exp_domain = $exp_domain[0];
-                            if(preg_match("/\A" . $exp_domain . "/i", $access_details[$key])){
+
+                            if(preg_match("/\A" . $exp_domain . "/i", $access_details[$key]))
+                            {
                                 $access_details[$key] = $valid_accesses[0] . '.*';
                             }
                         }
                     }
-                    if ($this->validateAccess($access_details[$key], $valid_accesses)) {
+
+                    if ($this->validateAccess($access_details[$key], $valid_accesses))
+                    {
                         unset($conflicts[$key]);
                     }
-                } elseif (in_array($key, array('server_hostname'), false)) {
-                    if ($this->validateAccess($this->wildcardServerHostname($access_details[$key]), $valid_accesses)) {
+                }
+                elseif (in_array($key, array('server_hostname'), false))
+                {
+                    if ($this->validateAccess($this->wildcardServerHostname($access_details[$key]), $valid_accesses))
+                    {
                         unset($conflicts[$key]);
                     }
                 }
@@ -692,7 +710,8 @@ class Main
          * Если конфликты для локального ключа остались, выдаем ошибку.
          * Скрипт не имеет права выполняться в данном расположении по указанной лицензии.
          */
-        if (count($conflicts) !== 0) {
+        if (count($conflicts) !== 0)
+        {
             return $this->errors = $this->status_messages['local_key_invalid_for_location'];
         }
 
@@ -1069,7 +1088,8 @@ class Main
      */
     private function useCurl($url, $query_string)
     {
-        if (!function_exists('curl_init')) {
+        if (!function_exists('curl_init'))
+        {
             return false;
         }
 
@@ -1101,7 +1121,8 @@ class Main
         $info = curl_getinfo($curl);
         curl_close($curl);
 
-        if ((integer)$info['http_code'] != 200) {
+        if ((integer)$info['http_code'] !== 200)
+        {
             return false;
         }
 
@@ -1164,7 +1185,6 @@ class Main
             $local_ip = $this->scrapePhpInfo($list, 'SERVER_ADDR');
         }
 
-        // На всякий случай собираем еще данные
         $local_ip = ($local_ip) ? $local_ip : $this->serverAddr();
 
         if ($local_ip === '127.0.0.1')
