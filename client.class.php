@@ -339,14 +339,17 @@ class Main
         $parts = explode("\n\n", $local_key);
         $local_key = $parts[0];
 
-        foreach ($local_key_delay_period = explode(',', $this->local_key_delay_period) as $key => $delay) {
+        foreach ($local_key_delay_period = explode(',', $this->local_key_delay_period) as $key => $delay)
+        {
             // добавляем разделитель
-            if (!$key) {
+            if (!$key)
+            {
                 $local_key .= "\n";
             }
 
             // считаем льготный период
-            if ($this->calcMaxDelay($local_key_expires, $delay) > time()) {
+            if ($this->calcMaxDelay($local_key_expires, $delay) > time())
+            {
                 continue;
             }
 
@@ -520,7 +523,7 @@ class Main
         /*
          * Проверяем секретный ключ на подделку. Если не совпадают, то возвратим ошибку.
          */
-        if (md5((string)$this->secret_key . (string)$parts[0]) != $parts[1])
+        if (md5((string)$this->secret_key . (string)$parts[0]) !== $parts[1])
         {
             return $this->errors = $this->status_messages['local_key_tampering'];
         }
@@ -546,23 +549,28 @@ class Main
         /*
          * Присваиваем срок окончания лицензии свойству класса
          */
-        if ((string)$key_data['activation_key_expires'] === 'never') {
+        if ((string)$key_data['activation_key_expires'] === 'never')
+        {
             $this->activation_key_expires = 0;
-        } else {
+        }
+        else
+        {
             $this->activation_key_expires = (integer)$key_data['activation_key_expires'];
         }
 
         /*
          * Проверяем лицензионный ключ на принадлежность к полученному лицензионному ключу.
          */
-        if ((string)$key_data['activation_key'] !== (string)$this->activation_key) {
+        if ((string)$key_data['activation_key'] !== (string)$this->activation_key)
+        {
             return $this->errors = $this->status_messages['activation_key_string_mismatch'];
         }
 
         /*
          * Проверяем статус лицензии, если она не активна и срок не истек, то возвращаем ошибку
          */
-        if ((integer)$key_data['status'] !== 1 && (integer)$key_data['status'] !== 2) {
+        if ((integer)$key_data['status'] !== 1 && (integer)$key_data['status'] !== 2)
+        {
             return $this->errors = $this->status_messages['status_' . $key_data['status']];
         }
 
@@ -571,7 +579,8 @@ class Main
          *
          * NOTE: если срок ключа активации истек и стоит запрет на использование после истечение срока, выдаем ошибку.
          */
-        if ($this->use_expires === false && (string)$key_data['activation_key_expires'] !== 'never' && (integer)$key_data['activation_key_expires'] < time()) {
+        if ($this->use_expires === false && (string)$key_data['activation_key_expires'] !== 'never' && (integer)$key_data['activation_key_expires'] < time())
+        {
             return $this->errors = $this->status_messages['status_2'];
         }
 
@@ -579,7 +588,8 @@ class Main
          * Проверяем срок истечения локального ключа, если он истек и стоит запрет на использование после истечения
          * срока лицензионного ключа, очищаем ключ и пытаемся получить новый.
          */
-        if ($this->use_expires === false && (string)$key_data['local_key_expires'] !== 'never' && (integer)$key_data['local_key_expires'] < time()) {
+        if ($this->use_expires === false && (string)$key_data['local_key_expires'] !== 'never' && (integer)$key_data['local_key_expires'] < time())
+        {
 
             /*
              * Если имеется доступный льготный период
@@ -605,7 +615,8 @@ class Main
          */
         if ($this->use_expires === true
             && (string)$key_data['activation_key_expires'] !== 'never'
-            && (integer)$key_data['activation_key_expires'] < strtotime($this->release_date)) {
+            && (integer)$key_data['activation_key_expires'] < strtotime($this->release_date))
+        {
             return $this->errors = $this->status_messages['download_access_expired'];
         }
 
@@ -616,11 +627,13 @@ class Main
         if ($this->use_expires === true
             && (string)$key_data['local_key_expires'] !== 'never'
             && (integer)$key_data['local_key_expires'] < time()
-            && (integer)$key_data['activation_key_expires'] > (integer)$key_data['local_key_expires'] + 604800) {
+            && (integer)$key_data['activation_key_expires'] > (integer)$key_data['local_key_expires'] + 604800)
+        {
             /*
              * Если имеется доступный льготный период
              */
-            if ($this->inDelayPeriod($local_key, $key_data['local_key_expires']) < 0) {
+            if ($this->inDelayPeriod($local_key, $key_data['local_key_expires']) < 0)
+            {
                 /*
                  * Очищаем не действительный локальный ключ
                  */
@@ -738,9 +751,12 @@ class Main
         {
             // пробуем создать пустой файл
             $f = @fopen($path, 'w');
-            if (!$f) {
+            if (!$f)
+            {
                 return $this->errors = $this->status_messages['missing_license_file'] . $path;
-            } else {
+            }
+            else
+            {
                 fwrite($f, '');
                 fclose($f);
             }
@@ -831,7 +847,8 @@ class Main
         /*
          * Проверяем наличие ошибок при получении деталей запроса ($this->accessDetails)
          */
-        if ($this->errors) {
+        if ($this->errors)
+        {
             return false;
         }
 
@@ -845,26 +862,33 @@ class Main
          */
         $result = false;
 
-        while (strlen($priority)) {
+        while (strlen($priority))
+        {
             $use = substr($priority, 0, 1);
 
             // если использовать fsockopen()
-            if ($use === 's') {
-                if ($result = $this->useFsockopen($this->server, $query_string)) {
+            if ($use === 's')
+            {
+                if ($result = $this->useFsockopen($this->server, $query_string))
+                {
                     break;
                 }
             }
 
             // если использовать curl()
-            if ($use === 'c') {
-                if ($result = $this->useCurl($this->server, $query_string)) {
+            if ($use === 'c')
+            {
+                if ($result = $this->useCurl($this->server, $query_string))
+                {
                     break;
                 }
             }
 
             // если использовать fopen()
-            if ($use === 'f') {
-                if ($result = $this->useFopen($this->server, $query_string)) {
+            if ($use === 'f')
+            {
+                if ($result = $this->useFopen($this->server, $query_string))
+                {
                     break;
                 }
             }
@@ -876,7 +900,8 @@ class Main
          * Если не удалось выполнить запрос всеми методами,
          * выдаем ошибку получения локального ключа
          */
-        if (!$result) {
+        if (!$result)
+        {
             $this->errors = $this->status_messages['could_not_obtain_local_key'];
 
             return false;
@@ -886,7 +911,8 @@ class Main
          * Если результат запроса вернул ошибку ключа
          * То выдаем ошибку + можно заменить Error на ошибку с сервера.
          */
-        if (substr($result, 0, 7) === 'Invalid') {
+        if (substr($result, 0, 7) === 'Invalid')
+        {
             $this->errors = str_replace('Invalid', 'Error', $result);
 
             return false;
@@ -895,7 +921,8 @@ class Main
         /*
          * Если результат запроса вернул ошибку (например сервер недоступен)
          */
-        if (substr($result, 0, 5) === 'Error') {
+        if (substr($result, 0, 5) === 'Error')
+        {
             $this->errors = $result;
 
             return false;
@@ -937,7 +964,8 @@ class Main
         $access_details['server_ip'] = ($access_details['server_ip']) ? $access_details['server_ip'] : @gethostbyaddr($access_details['ip']);
         $access_details['server_ip'] = ($access_details['server_ip']) ? $access_details['server_ip'] : 'Unknown';
 
-        foreach ($access_details as $key => $value) {
+        foreach ($access_details as $key => $value)
+        {
             $access_details[$key] = ($access_details[$key]) ? $access_details[$key] : 'Unknown';
         }
 
@@ -959,11 +987,13 @@ class Main
 
         foreach ($option as $key)
         {
-            if (!isset($_SERVER[$key]) || strlen(trim($_SERVER[$key])) <= 0) {
+            if (!isset($_SERVER[$key]) || strlen(trim($_SERVER[$key])) <= 0)
+            {
                 continue;
             }
 
-            if ($this->isWindows() && strpos($_SERVER[$key], '\\')) {
+            if ($this->isWindows() && strpos($_SERVER[$key], '\\'))
+            {
                 return @substr($_SERVER[$key], 0, @strrpos($_SERVER[$key], '\\'));
             }
 
@@ -981,8 +1011,10 @@ class Main
     private function serverAddr()
     {
         $options = array('SERVER_ADDR', 'LOCAL_ADDR');
-        foreach ($options as $key) {
-            if (isset($_SERVER[$key])) {
+        foreach ($options as $key)
+        {
+            if (isset($_SERVER[$key]))
+            {
                 return $_SERVER[$key];
             }
         }
@@ -1001,18 +1033,21 @@ class Main
     private function scrapePhpInfo($all, $target)
     {
         $all = explode($target, $all);
-        if (count($all) < 2) {
+        if (count($all) < 2)
+        {
             return false;
         }
         $all = explode("\n", $all[1]);
         $all = trim($all[0]);
 
-        if ($target === 'System') {
+        if ($target === 'System')
+        {
             $all = explode(" ", $all);
             $all = trim($all[(strtolower($all[0]) === 'windows' && strtolower($all[1]) === 'nt') ? 2 : 1]);
         }
 
-        if ($target === 'SCRIPT_FILENAME') {
+        if ($target === 'SCRIPT_FILENAME')
+        {
             $slash = ($this->isWindows() ? '\\' : '/');
 
             $all = explode($slash, $all);
@@ -1037,7 +1072,8 @@ class Main
      */
     private function useFsockopen($url, $query_string)
     {
-        if (!function_exists('fsockopen')) {
+        if (!function_exists('fsockopen'))
+        {
             return false;
         }
 
@@ -1059,9 +1095,12 @@ class Main
 
         $result = false;
         fputs($fp, $header);
-        while (!feof($fp)) {
+
+        while (!feof($fp))
+        {
             $result .= fgets($fp, 1024);
         }
+
         fclose($fp);
 
         if (strpos($result, '200') === false)
@@ -1071,7 +1110,8 @@ class Main
 
         $result = explode("\r\n\r\n", $result, 2);
 
-        if (!$result[1]) {
+        if (!$result[1])
+        {
             return false;
         }
 
@@ -1139,7 +1179,8 @@ class Main
      */
     private function useFopen($url, $query_string)
     {
-        if (!function_exists('file_get_contents') || !ini_get('allow_url_fopen') || !extension_loaded('openssl')) {
+        if (!function_exists('file_get_contents') || !ini_get('allow_url_fopen') || !extension_loaded('openssl'))
+        {
             return false;
         }
 
